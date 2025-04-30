@@ -1,0 +1,21 @@
+version: '3'
+services:
+  ddosia-connector:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/${GITHUB_USER:-yourusername}/ddosia-connector:latest
+    container_name: connector-ddosia
+    environment:
+      - OPENCTI_API_URL=${OPENCTI_API_URL}
+      - OPENCTI_API_KEY=${OPENCTI_API_KEY}
+      - DDOSIA_INTERVAL=${DDOSIA_INTERVAL:-300}
+      - DDOSIA_UPDATE_EXISTING_DATA=${DDOSIA_UPDATE_EXISTING_DATA:-true}
+      - DDOSIA_CONFIDENCE_LEVEL=${DDOSIA_CONFIDENCE_LEVEL:-60}
+      - DDOSIA_UPDATE_FREQUENCY=${DDOSIA_UPDATE_FREQUENCY:-300}
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3" 
