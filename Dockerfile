@@ -6,6 +6,8 @@ WORKDIR /app
 # Install system dependencies and update
 RUN apt-get update && apt-get install -y \
     gcc \
+    libmagic1 \
+    libmagic-dev \
     && apt-get upgrade -y \
     && rm -rf /var/lib/apt/lists/*
 

@@ -43,35 +43,31 @@ class DDoSiaConnector:
     def __init__(self):
         print(BANNER)
         self.session = requests.session()
-        config_file_path = os.path.dirname(
-    os.path.abspath(__file__)) + "/config.yml"
-        config = (
-            yaml.load(open(config_file_path), Loader=yaml.FullLoader)
-            if os.path.isfile(config_file_path)
-            else {}
-        )
         
-        # Override config with environment variables if they exist
-        if os.getenv("OPENCTI_API_URL"):
-            config["opencti"]["url"] = os.getenv("OPENCTI_API_URL")
-        if os.getenv("OPENCTI_API_KEY"):
-            config["opencti"]["token"] = os.getenv("OPENCTI_API_KEY")
-            
+        # Create config dictionary from environment variables
+        config = {
+            "opencti": {
+                "url": os.getenv("OPENCTI_API_URL"),
+                "token": os.getenv("OPENCTI_API_KEY"),
+                "verify_ssl": os.getenv("OPENCTI_VERIFY_SSL", "false").lower() == "true"
+            },
+            "connector": {
+                "id": "ddosia-connector",
+                "type": "EXTERNAL_IMPORT",
+                "name": "DDoSia Connector",
+                "scope": "ddosia",
+                "confidence_level": int(os.getenv("DDOSIA_CONFIDENCE_LEVEL", "60")),
+                "log_level": "info"
+            }
+        }
+        
         self.helper = OpenCTIConnectorHelper(config)
         
         # Get configuration values
-        self.interval = get_config_variable(
-    "DDOSIA_INTERVAL", [
-        "ddosia", "interval"], config, True)
-        self.update_existing_data = get_config_variable(
-    "DDOSIA_UPDATE_EXISTING_DATA", [
-        "ddosia", "update_existing_data"], config, False, True)
-        self.score = get_config_variable(
-    "DDOSIA_CONFIDENCE_LEVEL", [
-        "ddosia", "confidence_level"], config, True, 60)
-        self.update_frequency = get_config_variable(
-    "DDOSIA_UPDATE_FREQUENCY", [
-        "ddosia", "update_frequency"], config, True, 300)  # Default 5 minutes
+        self.interval = int(os.getenv("DDOSIA_INTERVAL", "300"))
+        self.update_existing_data = os.getenv("DDOSIA_UPDATE_EXISTING_DATA", "true").lower() == "true"
+        self.score = int(os.getenv("DDOSIA_CONFIDENCE_LEVEL", "60"))
+        self.update_frequency = int(os.getenv("DDOSIA_UPDATE_FREQUENCY", "300"))
         
         # Create organization
         external_reference_org = self.helper.api.external_reference.create(
