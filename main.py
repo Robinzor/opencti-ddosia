@@ -12,6 +12,7 @@ import yaml
 from pycti import OpenCTIConnectorHelper, get_config_variable
 from tld import get_tld
 import urllib3
+from dotenv import load_dotenv
 
 # Disable SSL warnings
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -436,57 +437,53 @@ class DDoSiaConnector:
 
                 # Check if it's time to update
                 if current_time - last_update >= self.update_frequency:
-                self.helper.log_info("Starting DDoSia connector...")
-                
-                # Get latest file URL
-                latest_url = self.get_latest_file()
-                self.helper.log_info(f"Fetching data from: {latest_url}")
-
+                    self.helper.log_info("Starting DDoSia connector...")
+                    # Get latest file URL
+                    latest_url = self.get_latest_file()
+                    self.helper.log_info(f"Fetching data from: {latest_url}")
                     # Create external reference for this update
                     external_reference = self.helper.api.external_reference.create(
                         source_name="witha.name",
                         url=latest_url
                     )
 
-                # Fetch and parse data
-                response = self.session.get(latest_url)
-                if response.status_code != 200:
-                    raise ValueError(f"Failed to fetch target list: HTTP {response.status_code}")
-                
-                json_data = response.json()
-                
-                # Get targets from the correct field
-                targets = json_data.get('targets', [])
-                if not targets:
-                    self.helper.log_warning("No targets found in the JSON data")
-                    time.sleep(self.interval)
-                    continue
-                
+                    # Fetch and parse data
+                    response = self.session.get(latest_url)
+                    if response.status_code != 200:
+                        raise ValueError(f"Failed to fetch target list: HTTP {response.status_code}")
+                    
+                    json_data = response.json()
+                    
+                    # Get targets from the correct field
+                    targets = json_data.get('targets', [])
+                    if not targets:
+                        self.helper.log_warning("No targets found in the JSON data")
+                        time.sleep(self.interval)
+                        continue
+                    
                     # First collect all targets and their attacks
                     target_attacks = self.collect_targets(targets)
                     self.helper.log_info(f"Collected {len(target_attacks)} targets")
 
                     # Process each target
-                success_count = 0
-                failure_count = 0
+                    success_count = 0
+                    failure_count = 0
                     for target_data in target_attacks.values():
                         if self.process_target(target_data, external_reference["id"]):
-                        success_count += 1
-                    else:
-                        failure_count += 1
+                            success_count += 1
+                        else:
+                            failure_count += 1
 
-                self.helper.log_info(f"Import completed: {success_count} targets processed successfully, {failure_count} failed")
+                    self.helper.log_info(f"Import completed: {success_count} targets processed successfully, {failure_count} failed")
                     last_update = current_time
 
-                    # Sleep for the interval time
+                # Sleep for the interval time
                 self.helper.log_info(f"Sleeping for {self.interval} seconds...")
                 time.sleep(self.interval)
 
             except Exception as e:
-                self.helper.log_error(f"Error in DDoSia connector: {str(e)}")
-                self.helper.log_info(f"Sleeping for {self.interval} seconds before retry...")
+                self.helper.log_error(f"Error in main loop: {str(e)}")
                 time.sleep(self.interval)
-                continue
 
 
 if __name__ == "__main__":
