@@ -1,7 +1,7 @@
 version: '3'
 services:
   ddosia-connector:
-    image: ghcr.io/robinzor/opencti-dossia:main
+    image: ghcr.io/robinzor/opencti-ddossia:main
     container_name: connector-dossia
     restart: unless-stopped
     environment:
