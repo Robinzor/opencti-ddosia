@@ -1,12 +1,13 @@
 version: '3'
 services:
   ddosia-connector:
-    build: .
+    image: ghcr.io/robinzor/opencti-dossia:main
     container_name: connector-dossia
     restart: unless-stopped
     environment:
       - OPENCTI_API_URL=${OPENCTI_API_URL}
       - OPENCTI_API_KEY=${OPENCTI_API_KEY}
+      - OPENCTI_VERIFY_SSL=${OPENCTI_VERIFY_SSL:-false}
       - DDOSIA_INTERVAL=${DDOSIA_INTERVAL:-300}
       - DDOSIA_UPDATE_EXISTING_DATA=${DDOSIA_UPDATE_EXISTING_DATA:-true}
       - DDOSIA_CONFIDENCE_LEVEL=${DDOSIA_CONFIDENCE_LEVEL:-60}
