@@ -66,7 +66,7 @@ The container is automatically built and pushed to GitHub Container Registry on 
 To use the pre-built container:
 
 ```bash
-docker pull ghcr.io/robinzor/opencti-ddosia:latest
+docker pull ghcr.io/robinzor/opencti-ddosia:main
 ```
 
 ## Development
