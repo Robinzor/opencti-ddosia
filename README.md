@@ -48,8 +48,8 @@ Replace the empty values for `OPENCTI_API_URL` and `OPENCTI_API_KEY` with your a
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Robinzor/opencti-ddossia.git
-cd opencti-ddossia
+git clone https://github.com/Robinzor/opencti-ddosia.git
+cd opencti-ddosia
 ```
 
 2. Create a `.env` file with your configuration
@@ -66,7 +66,7 @@ The container is automatically built and pushed to GitHub Container Registry on 
 To use the pre-built container:
 
 ```bash
-docker pull ghcr.io/robinzor/opencti-ddossia:latest
+docker pull ghcr.io/robinzor/opencti-ddosia:latest
 ```
 
 ## Development
