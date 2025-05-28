@@ -12,7 +12,6 @@ import yaml
 from pycti import OpenCTIConnectorHelper, get_config_variable
 from tld import get_tld
 import urllib3
-from dotenv import load_dotenv
 
 # Disable SSL warnings
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
